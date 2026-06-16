@@ -11,6 +11,8 @@ const io = new Server(server, {
 
 app.use(express.static("../client"));
 
+
+
 // =====================
 // GAME STATE
 // =====================
@@ -49,6 +51,8 @@ io.on("connection", (socket) => {
         delete snakes[socket.id];
     });
 });
+
+
 
 // =====================
 // GAME LOOP (IMPORTANT)

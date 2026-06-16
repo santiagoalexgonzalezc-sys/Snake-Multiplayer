@@ -1,15 +1,30 @@
+console.log("GAME JS LOADED");
 const socket = io();
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 const CELL = 20;
 
 let gameState = {};
 
-socket.on("state", (state) => {
-    gameState = state;
+
+
+socket.on("connect", () => {
+    console.log("Connected to server:", socket.id);
 });
+
+socket.on("state", (state) => {
+    console.log("STATE:", state);
+    gameState = state;
+}); 
+
+
+
 
 // send input
 document.addEventListener("keydown", (e) => {
@@ -30,22 +45,35 @@ document.addEventListener("keydown", (e) => {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    
+    if (!gameState || Object.keys(gameState).length === 0) {
+        requestAnimationFrame(draw);
+        return;
+    }
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(100, 100, 50, 50);
+
     for (const id in gameState) {
         const snake = gameState[id];
 
+        if (!snake || !snake.body) continue;
+
         ctx.fillStyle = "lime";
 
-        snake.body.forEach((part) => {
+        for (const part of snake.body) {
             ctx.fillRect(
-                part.x * CELL,
-                part.y * CELL,
-                CELL,
-                CELL
+                part.x * 20,
+                part.y * 20,
+                20,
+                20
             );
-        });
+        }
     }
 
     requestAnimationFrame(draw);
 }
+
+
 
 draw();
